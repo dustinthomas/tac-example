@@ -1,0 +1,25 @@
+{
+  "name": "fab-ui-frontend",
+  "private": true,
+  "version": "0.1.0",
+  "description": "QCI Fab UI frontend (dev tooling only — not a runtime dependency)",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "clean": "rm -rf ../backend/public/js/app",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "typescript": "~5.9.0",
+    "vue": "~3.5.28",
+    "pinia": "~3.0.4",
+    "vue-router": "~5.0.2",
+    "vitest": "^3.0.0",
+    "@vue/test-utils": "^2.4.0",
+    "jsdom": "^26.0.0",
+    "@playwright/test": "^1.50.0"
+  }
+}

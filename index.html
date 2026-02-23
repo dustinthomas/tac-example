@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QCI Fab UI - Design Reference</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* ============================================
+       CSS VARIABLES — Quantum Theme
+       ============================================ */
+    :root {
+      --qci-navy: #1E204B;
+      --qci-light-navy: #222354;
+      --qci-light-grey: #F4F5F9;
+      --qci-cyan: #00BCD4;
+      --qci-text: #3A3D4A;
+      --glass-bg: rgba(255, 255, 255, 0.03);
+      --glass-border: rgba(255, 255, 255, 0.1);
+      --blur: blur(20px);
+
+      /* Status colors */
+      --status-up: #2ecc71;
+      --status-issues: #fdd835;
+      --status-maintenance: #e67e22;
+      --status-down: #e74c3c;
+    }
+
+    /* ============================================
+       RESET & BASE
+       ============================================ */
+    html { overflow-y: scroll; }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Raleway', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #0a0e27 0%, #141844 50%, #1a237e 100%);
+      min-height: 100vh;
+      color: var(--qci-text);
+      overflow-x: clip;
+    }
+
+    /* ============================================
+       QUANTUM BACKGROUND EFFECTS
+       ============================================ */
+    .quantum-bg {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-image:
+        radial-gradient(circle at 15% 85%, rgba(0, 188, 212, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 85% 15%, rgba(33, 29, 83, 0.4) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(0, 188, 212, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 30% 30%, rgba(33, 150, 243, 0.1) 0%, transparent 35%);
+      z-index: 0;
+      opacity: 0.8;
+    }
+
+    .quantum-particles {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .quantum-particles div {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: rgba(0, 188, 212, 0.6);
+      border-radius: 50%;
+      animation: float 15s infinite ease-in-out;
+      box-shadow: 0 0 8px rgba(0, 188, 212, 0.8);
+    }
+
+    .quantum-particles div:nth-child(1) { left: 10%; top: 20%; animation-delay: 0s; }
+    .quantum-particles div:nth-child(2) { left: 20%; top: 80%; animation-delay: 2s; }
+    .quantum-particles div:nth-child(3) { left: 30%; top: 40%; animation-delay: 4s; }
+    .quantum-particles div:nth-child(4) { left: 40%; top: 60%; animation-delay: 1s; }
+    .quantum-particles div:nth-child(5) { left: 50%; top: 30%; animation-delay: 3s; }
+    .quantum-particles div:nth-child(6) { left: 60%; top: 70%; animation-delay: 5s; }
+    .quantum-particles div:nth-child(7) { left: 70%; top: 50%; animation-delay: 2.5s; }
+    .quantum-particles div:nth-child(8) { left: 80%; top: 25%; animation-delay: 4.5s; }
+    .quantum-particles div:nth-child(9) { left: 90%; top: 75%; animation-delay: 1.5s; }
+    .quantum-particles div:nth-child(10) { left: 15%; top: 55%; animation-delay: 3.5s; }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) translateX(0); opacity: 0.4; }
+      25% { transform: translateY(-20px) translateX(10px); opacity: 0.8; }
+      50% { transform: translateY(-10px) translateX(-10px); opacity: 0.6; }
+      75% { transform: translateY(-30px) translateX(5px); opacity: 0.9; }
+    }
+
+    /* ============================================
+       ANIMATIONS
+       ============================================ */
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(0.9); }
+    }
+
+    @keyframes pulse-fast {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(0.85); }
+    }
+
+    @keyframes auth-spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ============================================
+       BADGE (Quantum Ready pill)
+       ============================================ */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: rgba(0, 188, 212, 0.15);
+      border: 1px solid rgba(0, 188, 212, 0.3);
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--qci-cyan);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 16px;
+    }
+
+    .badge::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: var(--qci-cyan);
+      border-radius: 50%;
+      box-shadow: 0 0 8px rgba(0, 188, 212, 0.8);
+      animation: pulse 2s infinite;
+    }
+
+    /* ============================================
+       GLASS PANEL
+       ============================================ */
+    .glass-panel {
+      background: var(--glass-bg);
+      backdrop-filter: var(--blur);
+      -webkit-backdrop-filter: var(--blur);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      padding: 48px;
+      box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.4),
+        0 0 0 1px rgba(0, 188, 212, 0.1);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .glass-panel:hover {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(0, 188, 212, 0.3);
+      transform: translateY(-2px);
+      box-shadow:
+        0 12px 40px rgba(0, 0, 0, 0.5),
+        0 0 20px rgba(0, 188, 212, 0.15);
+    }
+
+    /* ============================================
+       QUANTUM LINE DIVIDER
+       ============================================ */
+    .quantum-line {
+      width: 60px;
+      height: 3px;
+      background: linear-gradient(90deg, var(--qci-cyan), var(--qci-light-navy));
+      border-radius: 2px;
+      margin: 24px auto;
+    }
+
+    /* ============================================
+       MAIN CONTENT AREA
+       ============================================ */
+    .main-content {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      padding-bottom: 140px;
+    }
+
+    /* ============================================
+       VIEW SWITCHER (top-left)
+       ============================================ */
+    .view-switcher {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 100;
+      display: flex;
+      gap: 8px;
+    }
+
+    .view-switcher button {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      color: rgba(255, 255, 255, 0.7);
+      padding: 10px 16px;
+      font-family: 'Raleway', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+
+    .view-switcher button:hover {
+      background: rgba(0, 188, 212, 0.08);
+      border-color: rgba(0, 188, 212, 0.3);
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    .view-switcher button.active {
+      background: rgba(0, 188, 212, 0.15);
+      border-color: rgba(0, 188, 212, 0.5);
+      color: var(--qci-cyan);
+    }
+
+    /* ============================================
+       USER ACTIONS (top-right)
+       ============================================ */
+    .user-actions {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 100;
+      display: flex;
+      gap: 12px;
+    }
+
+    .change-password-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      color: rgba(255, 255, 255, 0.7);
+      padding: 10px 16px;
+      font-family: 'Raleway', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+
+    .change-password-btn svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .change-password-btn:hover {
+      background: rgba(0, 188, 212, 0.08);
+      border-color: rgba(0, 188, 212, 0.3);
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    .logout-btn {
+      background: rgba(30, 32, 75, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      color: white;
+      padding: 10px 20px;
+      font-family: 'Raleway', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+
+    .logout-btn:hover {
+      background: rgba(30, 32, 75, 0.8);
+      border-color: var(--qci-cyan);
+      box-shadow: 0 4px 20px rgba(0, 188, 212, 0.2);
+      transform: translateY(-2px);
+    }
+
+    /* ============================================
+       LOGIN PAGE
+       ============================================ */
+    .login-container {
+      min-height: 80vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .login-container .glass-panel {
+      max-width: 400px;
+      width: 100%;
+    }
+
+    .logo-section {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .qci-logo {
+      width: 120px;
+      height: auto;
+      margin-bottom: 12px;
+    }
+
+    .logo-subtitle {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--qci-cyan);
+      letter-spacing: 4px;
+      text-transform: uppercase;
+    }
+
+    .login-container .badge {
+      display: block;
+      width: fit-content;
+      margin: 0 auto 16px auto;
+    }
+
+    .login-container h1 {
+      color: white;
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      text-align: center;
+      letter-spacing: -0.5px;
+    }
+
+    .login-form {
+      margin-top: 24px;
+    }
+
+    .form-group {
+      margin-bottom: 24px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: rgba(255, 255, 255, 0.7);
+      font-weight: 500;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      color: white;
+      font-size: 16px;
+      font-family: 'Raleway', sans-serif;
+    }
+
+    .form-group input::placeholder {
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--qci-cyan);
+      box-shadow: 0 0 0 2px rgba(0, 188, 212, 0.2);
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 16px;
+      background: var(--qci-navy);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      color: white;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'Raleway', sans-serif;
+    }
+
+    .login-btn:hover {
+      background: var(--qci-light-navy);
+      border-color: var(--qci-cyan);
+      box-shadow: 0 4px 20px rgba(0, 188, 212, 0.2);
+    }
+
+    .error-message {
+      margin-top: 16px;
+      color: #e74c3c;
+      text-align: center;
+      font-weight: 500;
+    }
+
+    /* ============================================
+       DASHBOARD PAGE
+       ============================================ */
+    .dashboard {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 20px;
+      width: 100%;
+    }
+
+    .dashboard .glass-panel {
+      max-width: 1200px;
+      width: 100%;
+      margin-bottom: 30px;
+    }
+
+    .dashboard .header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .dashboard h1 {
+      color: white;
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      letter-spacing: -0.5px;
+    }
+
+    .dashboard .glass-panel p {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 1.2rem;
+      text-align: center;
+      line-height: 1.7;
+      font-weight: 400;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 24px;
+    }
+
+    .feature-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 32px;
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+
+    .feature-card:hover {
+      background: rgba(0, 188, 212, 0.08);
+      border-color: rgba(0, 188, 212, 0.3);
+      transform: translateY(-8px);
+      box-shadow:
+        0 12px 32px rgba(0, 0, 0, 0.3),
+        0 0 20px rgba(0, 188, 212, 0.1);
+    }
+
+    .feature-card h3 {
+      color: white;
+      font-size: 1.3rem;
+      margin-bottom: 16px;
+      font-weight: 600;
+    }
+
+    .feature-card p {
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    /* ============================================
+       EQUIPMENT DASHBOARD
+       ============================================ */
+    .equipment-dashboard {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+      width: 100%;
+    }
+
+    .equipment-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .equipment-header svg {
+      width: 40px;
+      height: 40px;
+      color: var(--qci-cyan);
+    }
+
+    .equipment-header h1 {
+      color: white;
+      font-size: 2rem;
+      font-weight: 700;
+    }
+
+    .equipment-header p {
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 0.9rem;
+    }
+
+    /* Status summary cards */
+    .status-summary {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .status-card {
+      background: var(--glass-bg);
+      backdrop-filter: var(--blur);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .status-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+
+    .status-card .count {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .status-card .label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .status-card.up .count { color: var(--status-up); }
+    .status-card.up .label { color: rgba(46, 204, 113, 0.8); }
+    .status-card.up { border-color: rgba(46, 204, 113, 0.2); }
+
+    .status-card.issues .count { color: var(--status-issues); }
+    .status-card.issues .label { color: rgba(253, 216, 53, 0.8); }
+    .status-card.issues { border-color: rgba(253, 216, 53, 0.2); }
+
+    .status-card.maintenance .count { color: var(--status-maintenance); }
+    .status-card.maintenance .label { color: rgba(230, 126, 34, 0.8); }
+    .status-card.maintenance { border-color: rgba(230, 126, 34, 0.2); }
+
+    .status-card.down .count { color: var(--status-down); }
+    .status-card.down .label { color: rgba(231, 76, 60, 0.8); }
+    .status-card.down { border-color: rgba(231, 76, 60, 0.2); }
+
+    /* Filter bar */
+    .filter-bar {
+      background: var(--glass-bg);
+      backdrop-filter: blur(24px);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .filter-group label {
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .filter-group select,
+    .filter-group input {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      color: white;
+      padding: 8px 12px;
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.85rem;
+      min-width: 140px;
+    }
+
+    .filter-group select:focus,
+    .filter-group input:focus {
+      outline: none;
+      border-color: var(--qci-cyan);
+      box-shadow: 0 0 0 2px rgba(0, 188, 212, 0.2);
+    }
+
+    .equipment-count {
+      margin-left: auto;
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 0.85rem;
+    }
+
+    .equipment-count span {
+      color: var(--qci-cyan);
+      font-weight: 600;
+    }
+
+    /* Equipment table */
+    .equipment-table-wrapper {
+      background: var(--glass-bg);
+      backdrop-filter: var(--blur);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    .equipment-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .equipment-table th {
+      background: rgba(30, 32, 75, 0.6);
+      color: rgba(255, 255, 255, 0.7);
+      padding: 14px 16px;
+      text-align: left;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      cursor: pointer;
+      user-select: none;
+      transition: color 0.2s;
+    }
+
+    .equipment-table th:hover {
+      color: var(--qci-cyan);
+    }
+
+    .equipment-table td {
+      padding: 14px 16px;
+      color: rgba(255, 255, 255, 0.85);
+      font-size: 0.9rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .equipment-table tr {
+      transition: background 0.2s ease;
+    }
+
+    .equipment-table tbody tr:hover {
+      background: rgba(0, 188, 212, 0.04);
+    }
+
+    /* Status badge */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .status-badge .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    .status-badge.up {
+      background: rgba(46, 204, 113, 0.1);
+      color: var(--status-up);
+      border: 1px solid rgba(46, 204, 113, 0.2);
+    }
+    .status-badge.up .status-dot {
+      background: var(--status-up);
+      box-shadow: 0 0 6px rgba(46, 204, 113, 0.8);
+    }
+
+    .status-badge.up-with-issues {
+      background: rgba(253, 216, 53, 0.1);
+      color: var(--status-issues);
+      border: 1px solid rgba(253, 216, 53, 0.2);
+    }
+    .status-badge.up-with-issues .status-dot {
+      background: var(--status-issues);
+      box-shadow: 0 0 6px rgba(253, 216, 53, 0.8);
+    }
+
+    .status-badge.maintenance {
+      background: rgba(230, 126, 34, 0.1);
+      color: var(--status-maintenance);
+      border: 1px solid rgba(230, 126, 34, 0.2);
+    }
+    .status-badge.maintenance .status-dot {
+      background: var(--status-maintenance);
+      box-shadow: 0 0 6px rgba(230, 126, 34, 0.8);
+    }
+
+    .status-badge.down {
+      background: rgba(231, 76, 60, 0.1);
+      color: var(--status-down);
+      border: 1px solid rgba(231, 76, 60, 0.2);
+    }
+    .status-badge.down .status-dot {
+      background: var(--status-down);
+      box-shadow: 0 0 6px rgba(231, 76, 60, 0.8);
+      animation: pulse-fast 1s infinite;
+    }
+
+    /* Area badge */
+    .area-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      background: rgba(155, 89, 182, 0.15);
+      border: 1px solid rgba(155, 89, 182, 0.3);
+      border-radius: 12px;
+      color: #bb86fc;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    /* Criticality badge */
+    .criticality-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .criticality-badge.critical {
+      background: rgba(231, 76, 60, 0.15);
+      color: #e74c3c;
+      border: 1px solid rgba(231, 76, 60, 0.3);
+    }
+
+    .criticality-badge.high {
+      background: rgba(230, 126, 34, 0.15);
+      color: #e67e22;
+      border: 1px solid rgba(230, 126, 34, 0.3);
+    }
+
+    .criticality-badge.medium {
+      background: rgba(253, 216, 53, 0.15);
+      color: #fdd835;
+      border: 1px solid rgba(253, 216, 53, 0.3);
+    }
+
+    .criticality-badge.low {
+      background: rgba(46, 204, 113, 0.15);
+      color: #2ecc71;
+      border: 1px solid rgba(46, 204, 113, 0.3);
+    }
+
+    /* ============================================
+       DOCK NAVIGATION
+       ============================================ */
+    .dock-wrapper {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-bottom: 24px;
+      transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .dock-toggle-tab {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 20px;
+      margin-bottom: -1px;
+      background: rgba(33, 29, 83, 0.5);
+      backdrop-filter: blur(30px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-bottom: none;
+      border-radius: 10px 10px 0 0;
+      color: rgba(255, 255, 255, 0.4);
+      cursor: pointer;
+      padding: 0;
+      transition: color 0.2s ease, background 0.2s ease;
+    }
+
+    .dock-toggle-tab:hover {
+      background: rgba(0, 188, 212, 0.12);
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .dock-toggle-chevron {
+      width: 14px;
+      height: 14px;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .dock-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .dock {
+      display: flex;
+      gap: 12px;
+      padding: 14px 24px;
+      background: rgba(33, 29, 83, 0.6);
+      backdrop-filter: blur(30px);
+      -webkit-backdrop-filter: blur(30px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 32px;
+      box-shadow:
+        0 10px 40px rgba(0, 0, 0, 0.5),
+        0 0 0 1px rgba(0, 188, 212, 0.1),
+        0 0 30px rgba(0, 188, 212, 0.1);
+    }
+
+    .dock-item {
+      position: relative;
+      width: 64px;
+      height: 64px;
+      border-radius: 18px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      overflow: hidden;
+      will-change: transform;
+    }
+
+    .dock-item:hover {
+      transform: scale(1.25) translateY(-8px);
+      background: rgba(0, 188, 212, 0.2);
+      border-color: rgba(0, 188, 212, 0.5);
+      box-shadow:
+        0 20px 40px rgba(0, 0, 0, 0.4),
+        0 0 20px rgba(0, 188, 212, 0.3),
+        0 0 0 1px rgba(0, 188, 212, 0.2);
+    }
+
+    .dock-item.active {
+      background: rgba(0, 188, 212, 0.25);
+      border-color: rgba(0, 188, 212, 0.6);
+      box-shadow:
+        0 0 30px rgba(0, 188, 212, 0.3),
+        0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+
+    .dock-icon {
+      width: 32px;
+      height: 32px;
+      color: rgba(255, 255, 255, 0.9);
+      transition: all 0.3s ease;
+    }
+
+    .dock-item:hover .dock-icon {
+      color: var(--qci-cyan);
+      filter: drop-shadow(0 2px 8px rgba(0, 188, 212, 0.5));
+    }
+
+    .dock-item.active .dock-icon {
+      color: white;
+    }
+
+    .active-dot {
+      position: absolute;
+      bottom: 4px;
+      width: 4px;
+      height: 4px;
+      background: var(--qci-cyan);
+      border-radius: 50%;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      box-shadow: 0 0 8px rgba(0, 188, 212, 0.8);
+    }
+
+    .dock-item.active .active-dot {
+      opacity: 1;
+    }
+
+    .tooltip {
+      position: absolute;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%) translateY(10px);
+      background: rgba(33, 29, 83, 0.95);
+      backdrop-filter: blur(10px);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 500;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      white-space: nowrap;
+      border: 1px solid rgba(0, 188, 212, 0.3);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .dock-item:hover .tooltip {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ============================================
+       HIDDEN VIEW MANAGEMENT
+       ============================================ */
+    .view { display: none; }
+    .view.active { display: flex; }
+
+    /* Equipment view doesn't center vertically */
+    .view.active.equipment-view {
+      display: block;
+    }
+
+    /* ============================================
+       RESPONSIVE
+       ============================================ */
+    @media (max-width: 768px) {
+      .glass-panel { padding: 24px; }
+      .login-container h1 { font-size: 2rem; }
+      .dashboard h1 { font-size: 2rem; }
+      .feature-grid { grid-template-columns: 1fr; }
+      .status-summary { grid-template-columns: repeat(2, 1fr); }
+      .dock-item { width: 56px; height: 56px; }
+      .dock-icon { width: 28px; height: 28px; }
+      .filter-bar { flex-direction: column; align-items: stretch; }
+      .equipment-count { margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============================================
+       QUANTUM BACKGROUND
+       ============================================ -->
+  <div class="quantum-bg"></div>
+  <div class="quantum-particles">
+    <div></div><div></div><div></div><div></div><div></div>
+    <div></div><div></div><div></div><div></div><div></div>
+  </div>
+
+  <!-- ============================================
+       VIEW SWITCHER
+       ============================================ -->
+  <div class="view-switcher">
+    <button class="active" onclick="showView('login')">Login</button>
+    <button onclick="showView('dashboard')">Dashboard</button>
+    <button onclick="showView('equipment')">Equipment</button>
+  </div>
+
+  <!-- ============================================
+       USER ACTIONS (hidden on login view)
+       ============================================ -->
+  <div class="user-actions" id="userActions" style="display: none;">
+    <button class="change-password-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+        <path d="M7 11V7a5 5 0 0110 0v4"/>
+      </svg>
+      Change Password
+    </button>
+    <button class="logout-btn">Logout</button>
+  </div>
+
+  <!-- ============================================
+       VIEW: LOGIN
+       ============================================ -->
+  <div class="main-content view active" id="view-login">
+    <div class="login-container">
+      <div class="glass-panel">
+        <div class="logo-section">
+          <svg class="qci-logo" viewBox="0 0 464 142" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M1.61887 58.5544C3.98887 46.9444 7.05887 39.1344 13.0089 30.7444C24.6089 14.3744 41.8389 3.92443 61.5489 2.62443C91.3389 0.644434 121.779 -0.995559 151.199 2.83444C195.869 8.65444 220.539 46.4644 209.679 86.0944C208.309 91.0944 205.929 95.8344 203.399 102.254C191.949 92.9044 181.539 84.5544 171.379 75.9444C170.019 74.7944 169.479 72.3344 169.159 70.3844C165.579 48.4544 153.899 37.1344 131.549 35.9944C114.789 35.1444 97.9089 35.1144 81.1489 35.9944C59.2989 37.1344 44.5989 50.5544 43.9289 68.3544C43.2189 87.2544 56.2489 101.214 77.9989 103.204C89.9789 104.304 102.149 103.404 116.249 103.404C110.319 98.1644 105.599 94.0044 100.889 89.8444C101.319 89.0544 101.759 88.2744 102.189 87.4844C121.009 87.4844 139.829 87.4544 158.659 87.5444C159.999 87.5444 161.599 88.0644 162.619 88.8944C182.329 104.974 201.969 121.144 221.629 137.294C221.349 138.344 221.909 140.084 221.629 141.134H164.279C160.889 140.964 161.059 137.234 157.669 137.064C154.179 136.894 150.659 137.664 147.149 137.704C121.099 138.004 94.7689 140.744 69.0789 137.864C33.9389 133.924 6.26887 115.624 0.988865 78.7144C0.518865 75.4344 -0.241134 69.3544 1.61887 58.5544Z" fill="#00BCD4"/>
+            <path d="M406.559 103.744V139.404C389.659 139.404 373.309 139.684 356.979 139.334C333.059 138.824 308.769 140.264 285.329 136.554C243.989 130.004 219.379 96.1744 225.089 57.5044C229.019 30.8744 246.679 15.2544 270.869 6.21442C279.449 3.00442 288.879 0.544422 297.969 0.384422C333.719 -0.275578 369.489 0.114433 406.199 0.114433V35.6944C399.289 35.6944 392.589 35.6944 385.899 35.6944C360.139 35.6944 334.369 35.4844 308.619 35.7744C286.649 36.0244 270.179 47.9244 267.749 64.5544C264.579 86.2544 280.849 103.174 306.389 103.594C335.719 104.084 365.069 103.734 394.409 103.744C398.249 103.744 402.089 103.744 406.579 103.744H406.559Z" fill="#00BCD4"/>
+            <path d="M463.829 49.3844V138.604H421.829V49.3844H463.829Z" fill="#00BCD4"/>
+            <path d="M463.859 35.1744H421.799V0.644409H463.859V35.1744Z" fill="#00BCD4"/>
+          </svg>
+          <span class="logo-subtitle">Fab Interface</span>
+        </div>
+
+        <div class="badge">Quantum Ready</div>
+
+        <h1>Login to Fab UI</h1>
+        <div class="quantum-line"></div>
+
+        <form class="login-form" onsubmit="event.preventDefault(); showView('dashboard');">
+          <div class="form-group">
+            <label for="username">Username</label>
+            <input id="username" type="text" placeholder="Enter username" value="admin">
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input id="password" type="password" placeholder="Enter password" value="admin">
+          </div>
+          <button type="submit" class="login-btn">Login</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================
+       VIEW: DASHBOARD (Foundry)
+       ============================================ -->
+  <div class="main-content view" id="view-dashboard">
+    <div class="dashboard">
+      <div class="glass-panel">
+        <div class="header">
+          <h1>QCI Foundry Services</h1>
+          <div class="quantum-line"></div>
+          <p>Fabricating photonic computing engines using thin film lithium niobate (TFLN). Our foundry enables the future of integrated photonics with accessible and affordable quantum machines.</p>
+        </div>
+
+        <div class="feature-grid">
+          <div class="feature-card">
+            <h3>TFLN Fabrication</h3>
+            <p>State-of-the-art thin film lithium niobate processing</p>
+          </div>
+          <div class="feature-card">
+            <h3>Photonic Engines</h3>
+            <p>High-performance quantum photonic computing chips</p>
+          </div>
+          <div class="feature-card">
+            <h3>Room Temperature</h3>
+            <p>No cryogenic cooling required for operation</p>
+          </div>
+          <div class="feature-card">
+            <h3>Scalable Production</h3>
+            <p>From prototype to high-volume manufacturing</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================
+       VIEW: EQUIPMENT DASHBOARD
+       ============================================ -->
+  <div class="main-content view equipment-view" id="view-equipment">
+    <div class="equipment-dashboard">
+      <div class="equipment-header">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 14v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6m18 0v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4m18 0h-2m-2 0h-2m-2 0H7m2 0H5M3 6h.01M21 6h.01"/>
+        </svg>
+        <div>
+          <h1>Equipment Status</h1>
+          <p>Real-time monitoring of fab equipment</p>
+        </div>
+      </div>
+
+      <!-- Status Summary Cards -->
+      <div class="status-summary">
+        <div class="status-card up">
+          <div class="count">12</div>
+          <div class="label">Operational</div>
+        </div>
+        <div class="status-card issues">
+          <div class="count">3</div>
+          <div class="label">With Issues</div>
+        </div>
+        <div class="status-card maintenance">
+          <div class="count">2</div>
+          <div class="label">Maintenance</div>
+        </div>
+        <div class="status-card down">
+          <div class="count">1</div>
+          <div class="label">Down</div>
+        </div>
+      </div>
+
+      <!-- Filter Bar -->
+      <div class="filter-bar">
+        <div class="filter-group">
+          <label>Status</label>
+          <select>
+            <option>All Statuses</option>
+            <option>UP</option>
+            <option>UP WITH ISSUES</option>
+            <option>MAINTENANCE</option>
+            <option>DOWN</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Area</label>
+          <select>
+            <option>All Areas</option>
+            <option>Lithography</option>
+            <option>Etching</option>
+            <option>Deposition</option>
+            <option>Metrology</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Search</label>
+          <input type="text" placeholder="Search equipment...">
+        </div>
+        <div class="equipment-count">
+          Showing <span>18</span> equipment
+        </div>
+      </div>
+
+      <!-- Equipment Table -->
+      <div class="equipment-table-wrapper">
+        <table class="equipment-table">
+          <thead>
+            <tr>
+              <th>Equipment</th>
+              <th>Area</th>
+              <th>Bay</th>
+              <th>Status</th>
+              <th>Criticality</th>
+              <th>Updated By</th>
+              <th>Last Updated</th>
+              <th>Last Comment</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>E-Beam Lithography System</strong><br><span style="color: rgba(255,255,255,0.4); font-size: 0.8rem;">Electron Beam Writer</span></td>
+              <td><span class="area-badge">Lithography</span></td>
+              <td>Bay 1A</td>
+              <td><span class="status-badge up"><span class="status-dot"></span>UP</span></td>
+              <td><span class="criticality-badge critical">Critical</span></td>
+              <td>admin</td>
+              <td style="color: rgba(255,255,255,0.5);">2 hours ago</td>
+              <td style="color: rgba(255,255,255,0.5);">Calibration complete</td>
+            </tr>
+            <tr>
+              <td><strong>RIE Plasma Etcher</strong><br><span style="color: rgba(255,255,255,0.4); font-size: 0.8rem;">Reactive Ion Etcher</span></td>
+              <td><span class="area-badge">Etching</span></td>
+              <td>Bay 2B</td>
+              <td><span class="status-badge up-with-issues"><span class="status-dot"></span>UP WITH ISSUES</span></td>
+              <td><span class="criticality-badge high">High</span></td>
+              <td>operator</td>
+              <td style="color: rgba(255,255,255,0.5);">30 min ago</td>
+              <td style="color: rgba(255,255,255,0.5);">RF power fluctuating</td>
+            </tr>
+            <tr>
+              <td><strong>PECVD Chamber A</strong><br><span style="color: rgba(255,255,255,0.4); font-size: 0.8rem;">Plasma CVD System</span></td>
+              <td><span class="area-badge">Deposition</span></td>
+              <td>Bay 3A</td>
+              <td><span class="status-badge maintenance"><span class="status-dot"></span>MAINTENANCE</span></td>
+              <td><span class="criticality-badge medium">Medium</span></td>
+              <td>admin</td>
+              <td style="color: rgba(255,255,255,0.5);">1 day ago</td>
+              <td style="color: rgba(255,255,255,0.5);">Scheduled PM in progress</td>
+            </tr>
+            <tr>
+              <td><strong>Wafer Prober Station</strong><br><span style="color: rgba(255,255,255,0.4); font-size: 0.8rem;">Electrical Test System</span></td>
+              <td><span class="area-badge">Metrology</span></td>
+              <td>Bay 4C</td>
+              <td><span class="status-badge down"><span class="status-dot"></span>DOWN</span></td>
+              <td><span class="criticality-badge critical">Critical</span></td>
+              <td>operator</td>
+              <td style="color: rgba(255,255,255,0.5);">4 hours ago</td>
+              <td style="color: rgba(255,255,255,0.5);">Stage motor failure</td>
+            </tr>
+            <tr>
+              <td><strong>Sputter Deposition Tool</strong><br><span style="color: rgba(255,255,255,0.4); font-size: 0.8rem;">PVD Magnetron Sputter</span></td>
+              <td><span class="area-badge">Deposition</span></td>
+              <td>Bay 3B</td>
+              <td><span class="status-badge up"><span class="status-dot"></span>UP</span></td>
+              <td><span class="criticality-badge low">Low</span></td>
+              <td>admin</td>
+              <td style="color: rgba(255,255,255,0.5);">5 hours ago</td>
+              <td style="color: rgba(255,255,255,0.5);">Running batch 47</td>
+            </tr>
+            <tr>
+              <td><strong>Optical Profilometer</strong><br><span style="color: rgba(255,255,255,0.4); font-size: 0.8rem;">Surface Metrology</span></td>
+              <td><span class="area-badge">Metrology</span></td>
+              <td>Bay 4A</td>
+              <td><span class="status-badge up"><span class="status-dot"></span>UP</span></td>
+              <td><span class="criticality-badge medium">Medium</span></td>
+              <td>operator</td>
+              <td style="color: rgba(255,255,255,0.5);">1 hour ago</td>
+              <td style="color: rgba(255,255,255,0.5);">Ready for use</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================
+       DOCK NAVIGATION
+       ============================================ -->
+  <div class="dock-wrapper" id="dockWrapper">
+    <button class="dock-toggle-tab" onclick="toggleDock()">
+      <svg class="dock-toggle-chevron" id="dockChevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="7 10 12 15 17 10" />
+      </svg>
+    </button>
+
+    <div class="dock-container">
+      <nav class="dock" role="navigation" aria-label="Application dock">
+        <!-- Foundry -->
+        <div class="dock-item active" onclick="selectApp(this, 'dashboard')">
+          <svg class="dock-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          <div class="active-dot"></div>
+          <div class="tooltip">Foundry</div>
+        </div>
+        <!-- Quantum -->
+        <div class="dock-item" onclick="selectApp(this, 'dashboard')">
+          <svg class="dock-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+          <div class="active-dot"></div>
+          <div class="tooltip">Quantum</div>
+        </div>
+        <!-- Applications -->
+        <div class="dock-item" onclick="selectApp(this, 'dashboard')">
+          <svg class="dock-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4zm0-6h4v-4H4v4zm6 0h4v-4h-4v4zm6-10v4h4V4h-4zm-6 4h4V4h-4v4zm6 6h4v-4h-4v4zm0 6h4v-4h-4v4z"/></svg>
+          <div class="active-dot"></div>
+          <div class="tooltip">Applications</div>
+        </div>
+        <!-- Analytics -->
+        <div class="dock-item" onclick="selectApp(this, 'dashboard')">
+          <svg class="dock-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+          <div class="active-dot"></div>
+          <div class="tooltip">Analytics</div>
+        </div>
+        <!-- Equipment -->
+        <div class="dock-item" onclick="selectApp(this, 'equipment')">
+          <svg class="dock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 14v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6m18 0v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4m18 0h-2m-2 0h-2m-2 0H7m2 0H5M3 6h.01M21 6h.01"/></svg>
+          <div class="active-dot"></div>
+          <div class="tooltip">Equipment</div>
+        </div>
+        <!-- Research -->
+        <div class="dock-item" onclick="selectApp(this, 'dashboard')">
+          <svg class="dock-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z"/></svg>
+          <div class="active-dot"></div>
+          <div class="tooltip">Research</div>
+        </div>
+        <!-- Settings -->
+        <div class="dock-item" onclick="selectApp(this, 'dashboard')">
+          <svg class="dock-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M19.14 12.94c.04-.31.06-.63.06-.94 0-.31-.02-.63-.06-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.488.488 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.488.488 0 00-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+          <div class="active-dot"></div>
+          <div class="tooltip">Settings</div>
+        </div>
+        <!-- Users -->
+        <div class="dock-item" onclick="selectApp(this, 'dashboard')">
+          <svg class="dock-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+          <div class="active-dot"></div>
+          <div class="tooltip">Users</div>
+        </div>
+      </nav>
+    </div>
+  </div>
+
+  <!-- ============================================
+       JAVASCRIPT — View switching & dock interactivity
+       ============================================ -->
+  <script>
+    // View management
+    function showView(viewName) {
+      // Hide all views
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      // Show selected view
+      document.getElementById('view-' + viewName).classList.add('active');
+
+      // Update switcher buttons
+      document.querySelectorAll('.view-switcher button').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+
+      // Show/hide user actions (hidden on login)
+      document.getElementById('userActions').style.display = viewName === 'login' ? 'none' : 'flex';
+
+      // Show/hide dock (hidden on login)
+      document.getElementById('dockWrapper').style.display = viewName === 'login' ? 'none' : 'flex';
+    }
+
+    // Dock toggle
+    function toggleDock() {
+      const wrapper = document.getElementById('dockWrapper');
+      const chevron = document.getElementById('dockChevron');
+      wrapper.classList.toggle('dock-hidden');
+      chevron.classList.toggle('dock-toggle-chevron--up');
+    }
+
+    // Dock app selection
+    function selectApp(element, targetView) {
+      // Update active states
+      document.querySelectorAll('.dock-item').forEach(item => item.classList.remove('active'));
+      element.classList.add('active');
+
+      // Switch view
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      document.getElementById('view-' + targetView).classList.add('active');
+
+      // Update switcher buttons
+      document.querySelectorAll('.view-switcher button').forEach(btn => {
+        btn.classList.toggle('active', btn.textContent.toLowerCase() === targetView);
+      });
+    }
+
+    // Initialize: hide dock on login
+    document.getElementById('dockWrapper').style.display = 'none';
+  </script>
+
+</body>
+</html>
